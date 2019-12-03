@@ -9,6 +9,7 @@
 #include "../Worker.h"
 
 class Replace: public Worker {
+public:
     Replace(std::string &_from, std::string &_to);
     void work(Flow &flow) override;
 

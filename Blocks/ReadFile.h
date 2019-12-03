@@ -12,6 +12,7 @@ class ReadFile: public Worker {
 public:
     explicit ReadFile (std::string &_fileName);
     void work(Flow &flow) override;
+
 private:
     std::string fileName;
 };

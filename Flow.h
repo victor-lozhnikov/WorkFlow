@@ -11,6 +11,7 @@
 
 class Flow {
 public:
+    Flow() = default;
     std::vector <std::string> getFlowText() const {
         return text;
     }

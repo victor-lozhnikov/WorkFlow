@@ -12,6 +12,7 @@ class WriteFile: public Worker{
 public:
     explicit WriteFile (std::string &_fileName);
     void work(Flow &flow) override;
+
 private:
     std::string fileName;
 };
