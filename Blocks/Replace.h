@@ -14,6 +14,7 @@ public:
     void work(Flow &flow) override;
 
 private:
+    std::vector <int> findSubstrPos(std::string &s);
     std::string from;
     std::string to;
 };

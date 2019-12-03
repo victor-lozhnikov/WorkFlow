@@ -12,10 +12,10 @@ class Grep: public Worker {
 public:
     explicit Grep(std::string &_substr);
     void work(Flow &flow) override;
-    bool kmp(std::string &s);
 
 private:
     std::string substr;
+    bool kmp(std::string &s);
 };
 
 

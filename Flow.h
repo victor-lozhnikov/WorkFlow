@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class Flow {
 public:
@@ -16,7 +17,11 @@ public:
         return text;
     }
     void setFlowText(std::vector<std::string> &_text);
+    std::vector <std::string> getBlock(int id);
+
 private:
+    std::unordered_map <int, std::vector <std::string>> idToBlock;
+    std::vector <int> sequence;
     std::vector<std::string> text;
 };
 

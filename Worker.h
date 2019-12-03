@@ -9,7 +9,7 @@
 #include "Flow.h"
 
 class Worker {
-public:
+private:
     virtual void work(Flow &flow) = 0;
 };
 

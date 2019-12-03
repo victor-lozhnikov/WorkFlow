@@ -12,6 +12,7 @@ bool Grep::kmp(std::string &s) {
     std::string check = substr + (char)0 + s;
     int n = check.size();
     std::vector <int> pi (n);
+    pi[0] = 0;
     for (int i = 1; i < n; ++i) {
         int j = pi[i - 1];
         while (j > 0 && check[i] != check[j]) {
