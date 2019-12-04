@@ -50,7 +50,6 @@ void Parser::parse(Flow &flow) {
     }
     catch (std::ifstream::failure &e) {
         std::cerr << "EXCEPTION: can't open file \"" << fileName << "\"\n";
-        fin.close();
         exit(1);
     }
     std::string tmp;

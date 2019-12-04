@@ -15,10 +15,6 @@ void Flow::setFlowText(std::vector<std::string> &_text) {
     text = _text;
 }
 
-std::vector <std::string> Flow::getBlock(int id) {
-    return idToBlock[id];
-}
-
 bool Flow::checkId(int id) {
     return idToBlock.count(id);
 }
