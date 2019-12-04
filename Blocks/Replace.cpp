@@ -65,5 +65,4 @@ void Replace::work(Flow &flow) {
         new_text.push_back(new_str);
     }
     flow.setFlowText(new_text);
-    std::cout << flow.getFlowText()[0];
 }

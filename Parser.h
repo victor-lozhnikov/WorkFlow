@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <fstream>
 #include "Flow.h"
 
 class Parser {
@@ -19,6 +20,7 @@ private:
     int stringToInt(std::string &s, int it);
     void wrongIdException(std::string &id, int it);
     std::vector<std::string> split(const std::string &s, char delim);
+    std::ifstream fin;
 };
 
 #endif //WORKFLOW_PARSER_H

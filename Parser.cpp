@@ -23,7 +23,8 @@ std::vector<std::string> Parser::split (const std::string &s, char delim) {
 }
 
 void Parser::wrongIdException(std::string &id, int it) {
-    std::cerr << "EXCEPTION: wrong ID format \"" << id << "\" (line " << it << ")\n";
+    std::cerr << "EXCEPTION: invalid ID format \"" << id << "\" (line " << it << ")\n";
+    fin.close();
     exit(1);
 }
 
@@ -43,17 +44,34 @@ int Parser::stringToInt(std::string &s, int it) {
 }
 
 void Parser::parse(Flow &flow) {
-    std::ifstream fin (fileName);
+    fin.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+    try {
+        fin.open(fileName);
+    }
+    catch (std::ifstream::failure &e) {
+        std::cerr << "EXCEPTION: can't open file \"" << fileName << "\"\n";
+        fin.close();
+        exit(1);
+    }
     std::string tmp;
-    getline(fin, tmp);
+    try {
+        getline(fin, tmp);
+    }
+    catch (std::ifstream::failure &e) {
+        std::cerr << "EXCEPTION: unexpected end of file \"" << fileName << "\"\n";
+        fin.close();
+        exit(1);
+    }
     std::vector <std::string> splited = split(tmp, ' ');
     if (splited.size() > 1) {
         std::cerr << "EXCEPTION: invalid input format (line " <<
                   1 << ")\n";
+        fin.close();
         exit(1);
     }
     if (splited[0] != "desc") {
         std::cerr << "EXCEPTION: string \"desc\" is not found\n";
+        fin.close();
         exit(1);
     }
 
@@ -66,8 +84,15 @@ void Parser::parse(Flow &flow) {
     commands["dump"] = 1;
 
     int it = 2;
-    while (fin) {
-        getline(fin, tmp);
+    while (true) {
+        try {
+            getline(fin, tmp);
+        }
+        catch (std::ifstream::failure &e) {
+            std::cerr << "EXCEPTION: unexpected end of file \"" << fileName << "\"\n";
+            fin.close();
+            exit(1);
+        }
         splited = split(tmp, ' ');
         if (splited.size() == 1) {
             if (splited[0] == "csed") {
@@ -75,24 +100,34 @@ void Parser::parse(Flow &flow) {
             }
             else {
                 std::cerr << "EXCEPTION: string \"csed\" is not found\n";
+                fin.close();
                 exit(1);
             }
         }
         if (splited.size() < 3) {
             std::cerr << "EXCEPTION: invalid input format (line " <<
                     it << ")\n";
+            fin.close();
             exit(1);
         }
         int id = stringToInt(splited[0], it);
+        if (flow.checkId(id)) {
+            std::cerr << "EXCEPTION: ID \"" << id << "\" was reused (line " <<
+            it << ")\n";
+            fin.close();
+            exit(1);
+        }
         //std::cout << id << "\n";
         if (splited[1] != "=") {
-            std::cerr << "EXCEPTION: not found \"=\" in line " << it << "\n";
+            std::cerr << "EXCEPTION: \"=\" is not found (line " << it << ")\n";
+            fin.close();
             exit(1);
         }
 
         if (commands.count(splited[2]) == 0) {
             std::cerr << "EXCEPTION: command \"" << splited[2] <<
                     "\" is not found (line " << it << ")\n";
+            fin.close();
             exit(1);
         }
 
@@ -100,19 +135,43 @@ void Parser::parse(Flow &flow) {
             std::cerr << "EXCEPTION: invalid number of arguments for command \"" <<
                     splited[2] << "\", expected " << commands[splited[2]] <<
                     ", have " << splited.size() - 3 << " (line " << it << ")\n";
+            fin.close();
             exit(1);
         }
+        splited.erase(splited.begin(), splited.begin() + 2);
+        flow.setId(id, splited);
         it++;
     }
-    getline(fin, tmp);
+    try {
+        getline(fin, tmp);
+    }
+    catch (std::ifstream::failure &e) {
+        std::cerr << "EXCEPTION: unexpected end of file \"" << fileName << "\"\n";
+        fin.close();
+        exit(1);
+    }
     splited = split(tmp, ' ');
     if (splited.size() % 2 == 0) {
         std::cerr << "EXCEPTION: invalid input format (line " <<
                   it << ")\n";
+        fin.close();
         exit(1);
     }
 
     for (int i = 0; i < splited.size(); i += 2) {
-
+        int id = stringToInt(splited[i], it);
+        if (!flow.checkId(id)) {
+            std::cerr << "EXCEPTION: ID \"" << id << "\" is not found (line " <<
+                    it << ")\n";
+            fin.close();
+            exit(1);
+        }
+        flow.addToSequence(id);
+        if (i != splited.size() - 1 && splited[i + 1] != "->") {
+            std::cerr << "EXCEPTION: \"->\" is not found (line " << it << ")\n";
+            fin.close();
+            exit(1);
+        }
     }
+    fin.close();
 }

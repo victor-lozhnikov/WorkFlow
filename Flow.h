@@ -18,6 +18,10 @@ public:
     }
     void setFlowText(std::vector<std::string> &_text);
     std::vector <std::string> getBlock(int id);
+    bool checkId (int id);
+    void setId (int id, std::vector<std::string> &block);
+    void addToSequence (int id);
+    void start();
 
 private:
     std::unordered_map <int, std::vector <std::string>> idToBlock;
